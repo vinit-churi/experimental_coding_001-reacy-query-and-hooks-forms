@@ -6,7 +6,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="grid grid-cols-[300px_auto] bg-red-100 grid-rows-1 h-screen fixed w-full max-h-screen">
+    <div className="grid grid-cols-[300px_auto]  grid-rows-1 h-screen fixed w-full max-h-screen">
       <nav className="flex py-10  flex-col bg-blue-100 gap-4 px-5 overflow-y-auto min-h-0 max-h-full">
         <h2>React hooks form</h2>
         <Link
