@@ -66,6 +66,12 @@ export default function Layout({
         >
           experimental-dynamic-form-01
         </Link>
+        <Link
+          className="w-full rounded-lg h-max py-2 flex items-center justify-center bg-slate-400"
+          href="/experimental-dynamic-form-02"
+        >
+          experimental-dynamic-form-02
+        </Link>
       </nav>
       <div className="overflow-y-auto">{children}</div>
     </div>

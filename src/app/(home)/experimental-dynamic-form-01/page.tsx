@@ -126,7 +126,7 @@ const Page = () => {
   return (
     <div>
       <h2 className="text-center text-xl font-bold my-3 mt-5">
-        Dynamic form generation by admin
+        Dynamic form generation by admin ver 1
       </h2>
       <div className="bg-blue-200 rounded-md w-auto p-5 m-5 text-blue-600">
         <h2>Form builder</h2>

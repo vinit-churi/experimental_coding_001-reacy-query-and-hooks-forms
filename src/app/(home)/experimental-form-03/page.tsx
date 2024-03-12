@@ -2,7 +2,8 @@
 import DraggableExample from "@/components/common/DraggableExample";
 import React from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-
+import Autocomplete from "@mui/material/Autocomplete";
+import { TextField } from "@mui/material";
 const initialData = [
   {
     type: "text",
@@ -109,24 +110,75 @@ const initialData = [
 ];
 
 const Page = () => {
+  const employees: any[] = [
+    {
+      id: 0,
+      name: "",
+    },
+    {
+      id: 1,
+      name: "John Doe",
+    },
+    {
+      id: 2,
+      name: "kid Doe",
+    },
+  ];
   const {
     register,
     control,
     handleSubmit,
     formState: { errors, dirtyFields },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      employee: null,
+    },
+  });
 
   const submit: SubmitHandler<Record<string, unknown>> = (data) => {
     console.log(data);
   };
 
   return (
-    <div onSubmit={handleSubmit(submit)}>
+    <div>
       <h2 className="text-2xl font-bold text-center my-4">
         Experimental form 3
       </h2>
-      <form></form>
-      <DraggableExample />
+      <form onSubmit={handleSubmit(submit)}>
+        <Controller
+          name="employee"
+          control={control}
+          render={({ field }) => {
+            const selectedValue = field?.value
+              ? employees.find((emp) => emp.id === field?.value)
+              : null;
+
+            // async function here to update employees when the user types the input here
+
+            return (
+              <Autocomplete
+                value={selectedValue}
+                onChange={(e, value) => {
+                  field.onChange(value ? value.id : null);
+                }}
+                id="employee"
+                options={employees}
+                filterOptions={(options) =>
+                  options.filter((x) => x.name !== "")
+                }
+                getOptionLabel={(option) => option.name}
+                style={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Employees" variant="outlined" />
+                )}
+              />
+            );
+          }}
+        />
+        <button className="bg-blue-400 px-4 py-2" type="submit">
+          submit
+        </button>
+      </form>
     </div>
   );
 };
