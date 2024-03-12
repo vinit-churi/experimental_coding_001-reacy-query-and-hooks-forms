@@ -1,5 +1,8 @@
 "use client";
-import React from "react";
+import React, { useCallback } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import IconButton from "@mui/material/IconButton";
 import Autocomplete from "@mui/material/Autocomplete";
 import {
   Select,
@@ -19,7 +22,7 @@ import {
   RadioGroup,
 } from "@mui/material";
 
-import { prettyPrintJson, FormatOptions } from "pretty-print-json";
+import { prettyPrintJson } from "pretty-print-json";
 
 type FieldAttributes = "helperText" | "options";
 type TFieldTypes =
@@ -54,13 +57,15 @@ const Page = () => {
   const [fieldLabel, setFieldLabel] = React.useState<string>("");
   const [options, setOptions] = React.useState<string[]>([]);
   const [helperText, setHelperText] = React.useState<string>("");
+  const [isEdit, setIsEdit] = React.useState<boolean>(false);
+  const [editIndex, setEditIndex] = React.useState<number>(0);
 
   const handleAdd = () => {
     setFields((prev) => [
       ...prev,
       {
         fieldType,
-        label: "",
+        label: fieldLabel,
         helperText,
         options: options.join(";"),
       },
@@ -70,6 +75,49 @@ const Page = () => {
     setHelperText("");
     setFieldLabel("");
   };
+
+  const handleUpdateField = useCallback(() => {
+    const index = editIndex;
+    setFields((prev) => {
+      prev[index] = {
+        fieldType,
+        label: fieldLabel,
+        helperText,
+        options: options.join(";"),
+      };
+      return prev;
+    });
+    setIsEdit(false);
+    setFieldType("text");
+    setOptions([]);
+    setHelperText("");
+    setFieldLabel("");
+  }, [editIndex, fieldLabel, fieldType, helperText, options]);
+
+  function handleCancelEdit() {
+    setIsEdit(false);
+    setFieldType("text");
+    setOptions([]);
+    setHelperText("");
+    setFieldLabel("");
+  }
+
+  function makeEditAble(index: number) {
+    const field = fields[index];
+    setFieldType(field.fieldType as TFieldTypes);
+    setFieldLabel(field.label);
+    setHelperText(field.helperText);
+    setOptions(field.options.split(";"));
+    setIsEdit(true);
+    setEditIndex(index);
+  }
+
+  function handleDeleteField(index: number) {
+    setFields((prev) => {
+      prev.splice(index, 1);
+      return prev;
+    });
+  }
 
   return (
     <div>
@@ -148,9 +196,28 @@ const Page = () => {
                 ))
               : null}
             <Grid item xs={12}>
-              <Button variant="outlined" onClick={handleAdd}>
-                Add field
-              </Button>
+              {!isEdit ? (
+                <Button variant="outlined" onClick={handleAdd}>
+                  Add field
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outlined"
+                    color="success"
+                    onClick={handleUpdateField}
+                  >
+                    Update field
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleCancelEdit}
+                  >
+                    Cancel edit
+                  </Button>
+                </div>
+              )}
             </Grid>
           </Grid>
         </div>
@@ -164,8 +231,18 @@ const Page = () => {
               ? fields.map((field, index) => {
                   return (
                     <div key={index}>
-                      <h3>{field.label}</h3>
-                      <p>{field.helperText}</p>
+                      <div className="flex gap-4 items-center">
+                        <h3 className="w-max text-xl">{field.label}</h3>
+                        <div className="flex w-max ">
+                          <IconButton onClick={() => makeEditAble(index)}>
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton onClick={() => handleDeleteField(index)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </div>
+                      </div>
+                      {/* <p>{field.helperText}</p> */}
                       {field.fieldType === "text" ? (
                         <TextField
                           label={field.label}
