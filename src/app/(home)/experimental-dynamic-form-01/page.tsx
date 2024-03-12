@@ -16,6 +16,7 @@ import {
   FormControl,
   Button,
   SelectChangeEvent,
+  RadioGroup,
 } from "@mui/material";
 
 import { prettyPrintJson, FormatOptions } from "pretty-print-json";
@@ -184,15 +185,16 @@ const Page = () => {
                           label={field.label}
                         />
                       ) : field.fieldType === "radio" ? (
-                        field.options
-                          .split(";")
-                          .map((option, index) => (
+                        <RadioGroup>
+                          {field.options.split(";").map((option, index) => (
                             <FormControlLabel
-                              key={index}
+                              key={option}
+                              value={option}
                               control={<Radio />}
                               label={option}
                             />
-                          ))
+                          ))}
+                        </RadioGroup>
                       ) : field.fieldType === "select" ? (
                         <Select
                           labelId="demo-simple-select-label"
