@@ -22,6 +22,8 @@ import {
   RadioGroup,
 } from "@mui/material";
 
+import ExperimentalDragAndSort from "@/components/common/ExperimentalDragAndSort";
+
 import { prettyPrintJson } from "pretty-print-json";
 
 type FieldAttributes = "helperText" | "options";
@@ -129,99 +131,106 @@ const Page = () => {
       <div className="bg-blue-200 rounded-md w-auto p-5 m-5 text-blue-600">
         <h2>Form builder</h2>
         <Divider color="blue" />
-        <div className="flex">
-          <Grid container spacing={2} sx={{ my: "10px" }}>
-            <Grid item xs={12}>
-              <TextField label="From Title" variant="filled" fullWidth />
-            </Grid>
-            <Grid item xs={12}>
-              <Divider color="blue" />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="body2">Field details</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Field type
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Field type"
-                  value={fieldType}
-                  onChange={(e: SelectChangeEvent<TFieldTypes>) =>
-                    setFieldType(e.target.value as TFieldTypes)
-                  }
-                >
-                  <MenuItem value="text">Text</MenuItem>
-                  <MenuItem value="number">Number</MenuItem>
-                  <MenuItem value="checkbox">Checkbox</MenuItem>
-                  <MenuItem value="radio">Radio</MenuItem>
-                  <MenuItem value="select">Select</MenuItem>
-                  <MenuItem value="autocomplete">Auto complete</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                value={fieldLabel}
-                onChange={(e) => setFieldLabel(e.target.value)}
-                label="Field label"
-                variant="filled"
-                fullWidth
-              />
-            </Grid>
-            {FieldTypeFields[fieldType]
-              ? FieldTypeFields[fieldType].map((field, index) => (
-                  <Grid item xs={12} key={index}>
-                    <TextField
-                      label={field}
-                      variant="filled"
-                      value={
-                        field === "helperText" ? helperText : options.join(";")
-                      }
-                      onChange={(e) =>
-                        field === "helperText"
-                          ? setHelperText(e.target.value)
-                          : setOptions(e.target.value.split(";"))
-                      }
-                      helperText={
-                        field === "helperText"
-                          ? helperText
-                          : "provide ; separated options for the select, radio, and autocomplete fields."
-                      }
-                      fullWidth
-                      multiline
-                    />
-                  </Grid>
-                ))
-              : null}
-            <Grid item xs={12}>
-              {!isEdit ? (
-                <Button variant="outlined" onClick={handleAdd}>
-                  Add field
-                </Button>
-              ) : (
-                <div className="flex gap-2">
-                  <Button
-                    variant="outlined"
-                    color="success"
-                    onClick={handleUpdateField}
+        <div className="flex gap-2 mt-3">
+          <div className="flex flex-[1_1_70%] bg-blue-50 rounded-md p-4">
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField label="From Title" variant="filled" fullWidth />
+              </Grid>
+              <Grid item xs={12}>
+                <Divider color="blue" />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="body2">Field details</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">
+                    Field type
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Field type"
+                    value={fieldType}
+                    onChange={(e: SelectChangeEvent<TFieldTypes>) =>
+                      setFieldType(e.target.value as TFieldTypes)
+                    }
                   >
-                    Update field
+                    <MenuItem value="text">Text</MenuItem>
+                    <MenuItem value="number">Number</MenuItem>
+                    <MenuItem value="checkbox">Checkbox</MenuItem>
+                    <MenuItem value="radio">Radio</MenuItem>
+                    <MenuItem value="select">Select</MenuItem>
+                    <MenuItem value="autocomplete">Auto complete</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  value={fieldLabel}
+                  onChange={(e) => setFieldLabel(e.target.value)}
+                  label="Field label"
+                  variant="filled"
+                  fullWidth
+                />
+              </Grid>
+              {FieldTypeFields[fieldType]
+                ? FieldTypeFields[fieldType].map((field, index) => (
+                    <Grid item xs={12} key={index}>
+                      <TextField
+                        label={field}
+                        variant="filled"
+                        value={
+                          field === "helperText"
+                            ? helperText
+                            : options.join(";")
+                        }
+                        onChange={(e) =>
+                          field === "helperText"
+                            ? setHelperText(e.target.value)
+                            : setOptions(e.target.value.split(";"))
+                        }
+                        helperText={
+                          field === "helperText"
+                            ? helperText
+                            : "provide ; separated options for the select, radio, and autocomplete fields."
+                        }
+                        fullWidth
+                        multiline
+                      />
+                    </Grid>
+                  ))
+                : null}
+              <Grid item xs={12}>
+                {!isEdit ? (
+                  <Button variant="outlined" onClick={handleAdd}>
+                    Add field
                   </Button>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={handleCancelEdit}
-                  >
-                    Cancel edit
-                  </Button>
-                </div>
-              )}
+                ) : (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outlined"
+                      color="success"
+                      onClick={handleUpdateField}
+                    >
+                      Update field
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={handleCancelEdit}
+                    >
+                      Cancel edit
+                    </Button>
+                  </div>
+                )}
+              </Grid>
             </Grid>
-          </Grid>
+          </div>
+          <div className="flex flex-[1_1_30%] bg-blue-50 rounded-md">
+            <ExperimentalDragAndSort fields={fields} setFields={setFields} />
+          </div>
         </div>
       </div>
       <div className="bg-blue-200 rounded-md w-auto p-5 m-5 text-blue-600 flex gap-4">
