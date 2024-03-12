@@ -1,6 +1,6 @@
 "use client";
 import DraggableExample from "@/components/common/DraggableExample";
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import Autocomplete from "@mui/material/Autocomplete";
 import { TextField } from "@mui/material";
@@ -110,7 +110,7 @@ const initialData = [
 ];
 
 const Page = () => {
-  const employees: any[] = [
+  const initialEmployees: any[] = [
     {
       id: 0,
       name: "",
@@ -119,11 +119,15 @@ const Page = () => {
       id: 1,
       name: "John Doe",
     },
-    {
-      id: 2,
-      name: "kid Doe",
-    },
+    // {
+    //   id: 2,
+    //   name: "kid Doe",
+    // },
   ];
+
+  const [employees, setEmployees] = useState<any[]>(initialEmployees); // fetch employees here and set it to employees state
+  const firstRender = useRef(true);
+
   const {
     register,
     control,
@@ -131,13 +135,29 @@ const Page = () => {
     formState: { errors, dirtyFields },
   } = useForm({
     defaultValues: {
-      employee: null,
+      employee: 2,
     },
   });
 
   const submit: SubmitHandler<Record<string, unknown>> = (data) => {
     console.log(data);
   };
+
+  useEffect(() => {
+    if (firstRender.current) {
+      setTimeout(() => {
+        console.log("adding employee");
+        setEmployees((employees) => [
+          ...employees,
+          {
+            id: 2,
+            name: "kid Doe",
+          },
+        ]);
+      }, 3000);
+      firstRender.current = false;
+    }
+  }, []);
 
   return (
     <div>
@@ -149,12 +169,14 @@ const Page = () => {
           name="employee"
           control={control}
           render={({ field }) => {
-            const selectedValue = field?.value
-              ? employees.find((emp) => emp.id === field?.value)
-              : null;
+            const selectedValue =
+              (field?.value
+                ? employees.find((emp) => emp.id === field?.value)
+                : null) || null;
+            // having null has a value here is the important
 
             // async function here to update employees when the user types the input here
-
+            console.log("what's the selected value", selectedValue);
             return (
               <Autocomplete
                 value={selectedValue}
@@ -162,6 +184,8 @@ const Page = () => {
                   field.onChange(value ? value.id : null);
                 }}
                 id="employee"
+                loading={true}
+                loadingText="Loading..."
                 options={employees}
                 filterOptions={(options) =>
                   options.filter((x) => x.name !== "")
