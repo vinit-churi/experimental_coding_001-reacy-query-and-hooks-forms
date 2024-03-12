@@ -114,8 +114,10 @@ const Page = () => {
 
   function handleDeleteField(index: number) {
     setFields((prev) => {
-      prev.splice(index, 1);
-      return prev;
+      const newList = prev.filter((_, i) => i !== index);
+      //   prev.splice(index, 1);
+      //   return prev;
+      return newList;
     });
   }
 
